@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bundle\SecurityBundle\Security;  
 
 class ClientLivreController extends AbstractController
 {
@@ -202,12 +203,17 @@ class ClientLivreController extends AbstractController
     {
         $user = $security->getUser();
 
-        $commandes = $em->getRepository(Commande::class)->findBy([
-            'user' => $user,
-            'statut' => 'terminée'
-        ], [
-            'dateCommande' => 'DESC'
-        ]);
+        $commandes = $em->createQueryBuilder()
+            ->select('c')
+            ->from(Commande::class, 'c')
+            ->where('c.user = :user')
+            ->andWhere('c.statut IN (:statuts)')
+            ->setParameter('user', $user)
+            ->setParameter('statuts', ['terminée', 'en attente'])
+            ->orderBy('c.dateCommande', 'DESC')
+            ->getQuery()
+            ->getResult();
+
 
         return $this->render('client/historique_commandes.html.twig', [
             'commandes' => $commandes

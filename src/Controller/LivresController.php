@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\CommandeRepository;
+
 
 final class LivresController extends AbstractController
 {
@@ -108,4 +110,27 @@ public function all(LivresRepository $rep, PaginatorInterface $paginator, Reques
             'f' => $form->createView(),
         ]);
     }
+
+
+
+    #[Route('/admin/dashboard', name: 'admin_dashboard')]
+    public function dashboard(CommandeRepository $commandeRepo): Response
+    {
+        // Livre le plus vendu
+        $topLivre = $commandeRepo->findTopVente();
+
+        // Nombre de commandes par mois
+        $commandesParMois = $commandeRepo->countCommandesParMois();
+
+        return $this->render('livres/dashboard.html.twig', [
+            'topLivre' => $topLivre,
+            'commandesParMois' => $commandesParMois,
+        ]);
+    }
+
+
+
+
+
+
 }
