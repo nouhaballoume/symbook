@@ -1,0 +1,34 @@
+{% extends 'base_email.html.twig' %}
+
+{% block body %}
+    <h1>Merci pour votre commande !</h1>
+    <p>Bonjour {{ user.email }},</p>
+    <p>Votre commande #{{ commande.id }} a bien été enregistrée et payée via Stripe.</p>
+    
+    <h2>Détails de la commande :</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Livre</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Prix unitaire</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Quantité</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livre in livres %}
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ livre.titre }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ livre.prix }} €</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ livre.quantite }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ livre.total }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <p style="font-weight: bold; margin-top: 20px;">Total de la commande : {{ total }} €</p>
+    <p>Date de la commande : {{ date|date('d/m/Y H:i') }}</p>
+    
+    <p>Cordialement,<br>L'équipe SymBook</p>
+{% endblock %}

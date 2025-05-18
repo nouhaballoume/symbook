@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des commandes{% endblock %}
+
+{% block body %}
+    <h1>Gestion des commandes</h1>
+
+    <div class="mb-4">
+        <a href="{{ path('admin_commandes_list') }}" class="btn btn-outline-primary">Toutes</a>
+        <a href="{{ path('admin_commandes_list', {statut: 'en attente'}) }}" class="btn btn-outline-warning">En attente</a>
+        <a href="{{ path('admin_commandes_list', {statut: 'en cours'}) }}" class="btn btn-outline-info">En cours</a>
+        <a href="{{ path('admin_commandes_list', {statut: 'terminée'}) }}" class="btn btn-outline-success">Terminées</a>
+        <a href="{{ path('admin_commandes_list', {statut: 'payée'}) }}" class="btn btn-outline-secondary">Payées</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Paiement</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for commande in pagination %}
+                <tr>
+                    <td>{{ commande.id }}</td>
+                    <td>{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                    <td>{{ commande.user.email }}</td>
+                    <td>{{ commande.total }} DT</td>
+                    <td>
+                        <span class="badge 
+                            {% if commande.statut == 'en attente' %}bg-warning
+                            {% elseif commande.statut == 'en cours' %}bg-info
+                            {% elseif commande.statut == 'terminée' %}bg-success
+                            {% else %}bg-secondary{% endif %}">
+                            {{ commande.statut }}
+                        </span>
+                    </td>
+                    <td>{{ commande.modePaiement }}</td>
+                    <td>
+                        <a href="{{ path('admin_commande_show', {id: commande.id}) }}" class="btn btn-sm btn-primary">Voir</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ knp_pagination_render(pagination) }}
+{% endblock %}
